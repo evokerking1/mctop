@@ -151,5 +151,51 @@ impl ServerProperties {
         self.properties.insert(key.to_string(), value.to_string());
     }
 
+    pub fn get_common_properties() -> Vec<(&'static str, &'static str)> {
+        vec![
+            ("server-port", "25565"),
+            ("max-players", "20"),
+            ("motd", "A Minecraft Server"),
+            ("gamemode", "survival"),
+            ("difficulty", "easy"),
+            ("pvp", "true"),
+            ("spawn-protection", "16"),
+            ("online-mode", "true"),
+            ("white-list", "false"),
+            ("enable-command-block", "false"),
+            ("spawn-monsters", "true"),
+            ("spawn-animals", "true"),
+            ("spawn-npcs", "true"),
+            ("allow-flight", "false"),
+            ("view-distance", "10"),
+            ("simulation-distance", "10"),
+            ("level-name", "world"),
+            ("level-seed", ""),
+            ("level-type", "minecraft:normal"),
+        ]
+    }
+
     
+}
+
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OpEntry {
+    pub uuid: String,
+    pub name: String,
+    pub level: u8,
+
+    #[serde(rename="bypassesPlayerLimit")]
+    pub bypasses_player_limit: bool,
+}
+
+pub fn load_ops(server_path: &PathBuf) -> Result<Vec<OpEntry>> {
+    let ops_path = server_path.join("ops.json");
+    if ops_path.exists() {
+        let content = fs::read_to_string(server_path);
+        let ops: Vec<OpEntry> = serde_json::from_str(&content)
+        Ok(ops)
+    } else {
+        Ok(Vec::new())
+    }
 }
