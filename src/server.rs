@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, fs, path::PathBuf};
 
 use serde::{Deserialize, Serialize, ser::SerializeStructVariant};
 use uuid::Uuid;
@@ -106,5 +106,25 @@ pub struct ServerProperties {
 }
 
 impl ServerProperties {
-    pub fn load(path: &PathBuf) -> Result<Self> {}
+    pub fn load(path: &PathBuf) -> Result<Self> {
+        let props_path = path.join("server.properties");
+        let mut properties = HashMap::new();
+
+        if props_path.exists() {
+            let content = fs::read_to_string(&props_path)?;
+            for line in content.lines() {
+                let line = line.trim();
+                if line.is_empty() || line.starts_with('#') {
+                    continue;
+                }
+                if let Some((key, value)) = line.split_once('=') {
+                    properties.insert(key.trim().to_string(), value.trim().to_string());
+                }
+            }
+
+            Ok(Self { properties })
+        }
+    }
+
+    pub fn save(&self, path: PathBuf) -> Result<()> {}
 }
