@@ -126,5 +126,30 @@ impl ServerProperties {
         }
     }
 
-    pub fn save(&self, path: PathBuf) -> Result<()> {}
+    pub fn save(&self, path: PathBuf) -> Result<()> {
+        let props_path = .path.join("server.properties")
+        let mut content = String::new();
+        // Collect The Keys
+        let mut keys: Vec<_> = self.properties.keys().collect();
+        keys.sort();
+
+        for keys in keys {
+            if let Some(Value) = self.properties.get(key) {
+                content.push_str(&format!("{}={}\n", key, Value));
+            }
+        }
+
+        fs::write(props_path, content)?;
+        Ok(())
+    }
+
+    pub fn get(&self, key: &str) -> Option<&String> {
+        self.properties.get(key)
+    }
+
+    pub fn set(&mut self, key: &str, value: &str) {
+        self.properties.insert(key.to_string(), value.to_string());
+    }
+
+    
 }
